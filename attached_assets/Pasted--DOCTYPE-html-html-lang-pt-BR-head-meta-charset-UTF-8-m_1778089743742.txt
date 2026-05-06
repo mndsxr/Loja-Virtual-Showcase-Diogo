@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vitrine Streetwear</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #000;
+  color: #fff;
+}
+
+/* HEADER */
+header {
+  background: linear-gradient(90deg, #FFC300, #FF5733);
+  padding: 15px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* GRID */
+.container {
+  padding: 15px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+/* CARD */
+.card {
+  background: #111;
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(255,87,51,0.3);
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* IMAGENS */
+.card img {
+  width: 100px;
+  margin-bottom: 10px;
+}
+
+/* DESTAQUE TN */
+.destaque {
+  grid-column: span 2;
+  border: 2px solid #FFC300;
+  box-shadow: 0 0 25px rgba(255,195,0,0.9);
+}
+
+.destaque img {
+  width: 220px;
+  filter: drop-shadow(0 0 25px orange);
+}
+
+/* CONTROLES */
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+button {
+  background: #FF5733;
+  border: none;
+  padding: 8px 12px;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #FFC300;
+  color: #000;
+}
+
+/* ENTREGA */
+select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+/* TOTAL */
+.total {
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+/* BOTÃO FIXO */
+.checkout {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #FF5733;
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<header>🔥 Vitrine Streetwear</header>
+
+<div class="container">
+  <div class="grid" id="produtos"></div>
+</div>
+
+<div class="container">
+  <h3>Entrega</h3>
+  <select id="bairro">
+    <option value="">Selecione o bairro</option>
+    <option value="Jardim Boa Vista" data-frete="49.99">Jardim Boa Vista - R$49,99</option>
+    <option value="Jardim do Lago" data-frete="49.99">Jardim do Lago - R$49,99</option>
+  </select>
+
+  <div class="total">Subtotal: R$ <span id="subtotal">0.00</span></div>
+  <div class="total">Frete: R$ <span id="frete">0.00</span></div>
+  <div class="total"><strong>Total: R$ <span id="total">0.00</span></strong></div>
+</div>
+
+<div class="checkout" onclick="finalizar()">Finalizar Pedido no WhatsApp</div>
+
+<script>
+const produtos = [
+  { 
+    nome: "Camiseta personalizada", 
+    preco: 49.99,
+    img: "https://via.placeholder.com/150"
+  },
+  { 
+    nome: "Calça baggy moletom", 
+    preco: 79.99,
+    img: "https://via.placeholder.com/150"
+  },
+  { 
+    nome: "TN sunset", 
+    preco: 299.99,
+    img: "tn_no_bg.png", // 🔥 SUA IMAGEM SEM FUNDO
+    destaque: true
+  }
+];
+
+let carrinho = {};
+
+function renderProdutos() {
+  const container = document.getElementById("produtos");
+
+  produtos.forEach((p, i) => {
+    container.innerHTML += `
+      <div class="card ${p.destaque ? 'destaque' : ''}">
+        <img src="${p.img}">
+        <h3>${p.nome}</h3>
+        <p>R$ ${p.preco.toFixed(2)}</p>
+        <div class="controls">
+          <button onclick="add(${i})">+</button>
+          <span id="qtd-${i}">0</span>
+          <button onclick="remove(${i})">-</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function add(i) {
+  carrinho[i] = (carrinho[i] || 0) + 1;
+  atualizar();
+}
+
+function remove(i) {
+  if (carrinho[i]) carrinho[i]--;
+  atualizar();
+}
+
+function atualizar() {
+  let subtotal = 0;
+
+  produtos.forEach((p, i) => {
+    let qtd = carrinho[i] || 0;
+    document.getElementById(`qtd-${i}`).innerText = qtd;
+    subtotal += qtd * p.preco;
+  });
+
+  let frete = 0;
+  let select = document.getElementById("bairro");
+  if (select.value) {
+    frete = parseFloat(select.selectedOptions[0].dataset.frete);
+  }
+
+  document.getElementById("subtotal").innerText = subtotal.toFixed(2);
+  document.getElementById("frete").innerText = frete.toFixed(2);
+  document.getElementById("total").innerText = (subtotal + frete).toFixed(2);
+}
+
+document.getElementById("bairro").addEventListener("change", atualizar);
+
+function finalizar() {
+  let select = document.getElementById("bairro");
+
+  if (Object.keys(carrinho).length === 0) {
+    alert("Adicione produtos!");
+    return;
+  }
+
+  if (!select.value) {
+    alert("Selecione o bairro!");
+    return;
+  }
+
+  let mensagem = "Olá, quero fazer um pedido:%0A🛍️ Produtos:%0A";
+
+  produtos.forEach((p, i) => {
+    if (carrinho[i]) {
+      mensagem += `- ${p.nome} (Qtd: ${carrinho[i]})%0A`;
+    }
+  });
+
+  mensagem += `🚚 Entrega: ${select.value}%0A`;
+  mensagem += `💰 Total: R$ ${document.getElementById("total").innerText}`;
+
+  window.open(`https://wa.me/551140028922?text=${mensagem}`);
+}
+
+renderProdutos();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "0UHMBsOCUC0KS22UCTo-F"
+uri = "file://artifacts/vitrine-streetwear/src/assets/images/tshirt.png"
+type = "image"
+title = "Streetwear black t-shirt product photo"
+
+[[generated]]
+id = "pVasKyfofqbMrC8S8Osz5"
+uri = "file://artifacts/vitrine-streetwear/src/assets/images/pants.png"
+type = "image"
+title = "Streetwear baggy sweatpants product photo"
+
+[[generated]]
+id = "rII8dX_-jurNl23yJ8KAh"
+uri = "file://artifacts/vitrine-streetwear/src/assets/images/tn-sneaker.png"
+type = "image"
+title = "Nike TN sneaker sunset orange"
