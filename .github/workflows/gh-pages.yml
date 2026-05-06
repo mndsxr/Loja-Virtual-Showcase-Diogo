@@ -35,6 +35,7 @@ jobs:
         working-directory: artifacts/vitrine-streetwear
         env:
           BASE_PATH: "/${{ github.event.repository.name }}/"
+          PORT: 4173
         run: pnpm run build
 
       - name: Deploy to GitHub Pages
